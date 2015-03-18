@@ -13,6 +13,7 @@ import urllib
 import urllib2
 import re
 import json
+import sys
 # hack CERTIFICATE_VERIFY_FAILED
 # https://github.com/mtschirs/quizduellapi/issues/2
 import ssl
@@ -28,10 +29,10 @@ pic_url = "https://kyfw.12306.cn/otn/passcodeNew/getPassCodeNew?module=login&ran
 def get_img():
     resp = urllib.urlopen(pic_url)
     raw = resp.read()
-    with open("./tmp.jpg", 'wb') as fp:
+    with open("tmp.jpg", 'wb') as fp:
         fp.write(raw)
 
-    return Image.open("./tmp.jpg")
+    return Image.open("tmp.jpg")
 
 
 def get_sub_img(im, x, y):
@@ -132,8 +133,12 @@ def binarize(im, thresh=120):
 
 
 if __name__ == '__main__':
-    im = get_img()
-    #im = Image.open("./tmp.jpg")
+    if len(sys.argv) == 1:
+        im = get_img()
+        #im = Image.open("./tmp.jpg")
+    elif len(sys.argv) == 2:
+        im = Image.open(sys.argv[1])
+
     print 'OCR Question:', ocr_question_extract(im)
     for y in range(2):
         for x in range(4):
